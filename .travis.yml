@@ -1,0 +1,5 @@
+language: python
+jobs:
+    include:
+      - stage: test
+        script: python2 -m unittest discover -v

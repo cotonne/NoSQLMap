@@ -1,4 +1,4 @@
-#!/usr/bin/python
+#!/usr/bin/python2
 # NoSQLMap Copyright 2012-2017 NoSQLMap Development team
 # See the file 'doc/COPYING' for copying permission
 
@@ -19,28 +19,32 @@ if version_info >= (2, 7, 9):
     ssl._create_default_https_context = ssl._create_unverified_context
 
 
-def save_to(savePath, vulnAddrs, possAddrs, strTbAttack,intTbAttack):
+def save_to(savePath, content):
     fo = open(savePath, "wb")
-    fo.write ("Vulnerable URLs:\n")
-    fo.write("\n".join(vulnAddrs))
-    fo.write("\n\n")
-    fo.write("Possibly Vulnerable URLs:\n")
-    fo.write("\n".join(possAddrs))
-    fo.write("\n")
-    fo.write("Timing based attacks:\n")
-    
-    if strTbAttack == True:
-        fo.write("String Attack-Successful\n")
-    else:
-        fo.write("String Attack-Unsuccessful\n")
-    fo.write("\n")
-    
-    if intTbAttack == True:
-        fo.write("Integer attack-Successful\n")
-    else:
-        fo.write("Integer attack-Unsuccessful\n")
-    fo.write("\n")
+    fo.write(content)
     fo.close()
+
+
+def build_report(intTbAttack, possAddrs, strTbAttack, vulnAddrs):
+    content = ""
+    content += "Vulnerable URLs:\n"
+    content += "\n".join(vulnAddrs)
+    content += "\n\n"
+    content += "Possibly Vulnerable URLs:\n"
+    content += "\n".join(possAddrs)
+    content += "\n"
+    content += "Timing based attacks:\n"
+    if strTbAttack:
+        content += "String Attack-Successful\n"
+    else:
+        content += "String Attack-Unsuccessful\n"
+    content += "\n"
+    if intTbAttack:
+        content += "Integer attack-Successful\n"
+    else:
+        content += "Integer attack-Unsuccessful\n"
+    content += "\n"
+    return content
 
 def args():
     return [
@@ -373,7 +377,7 @@ def getApps(webPort,victim,uri,https,verb,requestHeaders, args = None):
                 savePath = raw_input("Enter output file name: ")
             else:
                 savePath = args.savePath
-            save_to(savePath, vulnAddrs, possAddrs, strTbAttack,intTbAttack)
+            save_to(savePath, build_report(intTbAttack, possAddrs, strTbAttack, vulnAddrs))
 
     if args == None:
         raw_input("Press enter to continue...")
@@ -751,7 +755,7 @@ def postApps(victim,webPort,uri,https,verb,postData,requestHeaders, args = None)
                 savePath = raw_input("Enter output file name: ")
             else:
                 savePath = args.savePath
-            save_to(savePath, vulnAddrs, possAddrs, strTbAttack,intTbAttack)
+            save_to(savePath, build_report(intTbAttack, possAddrs, strTbAttack, vulnAddrs))
     if args == None:
         raw_input("Press enter to continue...")
     return()
